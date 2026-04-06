@@ -1,25 +1,30 @@
+'use client';
+
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { User, AuthTokens } from '@celebrate4me/shared';
+import { User } from '@celebrate4me/shared';
 
 interface AuthState {
   user: User | null;
-  accessToken: string | null;
-  refreshToken: string | null;
-  setAuth: (user: User, tokens: AuthTokens) => void;
+  setUser: (user: User) => void;
   clearAuth: () => void;
+}
+
+function clearSessionCookie() {
+  if (typeof document === 'undefined') return;
+  document.cookie = 'session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; SameSite=Lax';
 }
 
 export const useAuthStore = create<AuthState>()(
   persist(
     (set) => ({
       user: null,
-      accessToken: null,
-      refreshToken: null,
-      setAuth: (user, tokens) =>
-        set({ user, accessToken: tokens.accessToken, refreshToken: tokens.refreshToken }),
-      clearAuth: () => set({ user: null, accessToken: null, refreshToken: null }),
+      setUser: (user) => set({ user }),
+      clearAuth: () => {
+        set({ user: null });
+        clearSessionCookie();
+      },
     }),
-    { name: 'auth-storage' },
+    { name: 'auth-user' },
   ),
 );

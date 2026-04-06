@@ -1,40 +1,29 @@
 'use client';
 
-import { Suspense, useEffect } from 'react';
-import { useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { loginSchema, LoginInput } from '@celebrate4me/shared';
-import { useLogin } from '@/hooks/use-auth';
+import { registerSchema, RegisterInput } from '@celebrate4me/shared';
+import { useRegister } from '@/hooks/use-auth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { Spinner } from '@/components/ui/spinner';
-import { toast } from 'sonner';
 import Link from 'next/link';
 
-function LoginInner() {
-  const searchParams = useSearchParams();
-  const { mutate: login, isPending, error } = useLogin();
-  const { register, handleSubmit, formState: { errors } } = useForm<LoginInput>({
-    resolver: zodResolver(loginSchema),
+export default function RegisterPage() {
+  const { mutate: register, isPending, error } = useRegister();
+  const { register: field, handleSubmit, formState: { errors } } = useForm<RegisterInput>({
+    resolver: zodResolver(registerSchema),
   });
-
-  useEffect(() => {
-    if (searchParams.get('registered') === 'true') {
-      toast.success('Account created! Check your email to verify your address.');
-    }
-  }, [searchParams]);
 
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
   return (
     <Card className="w-full max-w-md">
       <CardHeader className="text-center">
-        <CardTitle className="text-2xl">Welcome back</CardTitle>
-        <CardDescription>Sign in to your account</CardDescription>
+        <CardTitle className="text-2xl">Create account</CardTitle>
+        <CardDescription>Start sending gifts to Nigeria today</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         {/* Google OAuth */}
@@ -58,56 +47,48 @@ function LoginInner() {
           </span>
         </div>
 
-        <form onSubmit={handleSubmit((data) => login(data))} className="space-y-4">
+        <form onSubmit={handleSubmit((data) => register(data))} className="space-y-4">
+          <div className="space-y-1.5">
+            <Label htmlFor="username">Username</Label>
+            <Input id="username" {...field('username')} placeholder="johndoe" autoComplete="username" />
+            {errors.username && <p className="text-destructive text-xs">{errors.username.message}</p>}
+          </div>
+
           <div className="space-y-1.5">
             <Label htmlFor="email">Email</Label>
-            <Input id="email" {...register('email')} type="email" placeholder="you@example.com" autoComplete="email" />
+            <Input id="email" {...field('email')} type="email" placeholder="you@example.com" autoComplete="email" />
             {errors.email && <p className="text-destructive text-xs">{errors.email.message}</p>}
           </div>
 
           <div className="space-y-1.5">
-            <div className="flex items-center justify-between">
-              <Label htmlFor="password">Password</Label>
-              <Link href="/forgot-password" className="text-xs text-muted-foreground hover:text-foreground transition-colors">
-                Forgot password?
-              </Link>
-            </div>
-            <Input id="password" {...register('password')} type="password" placeholder="Your password" autoComplete="current-password" />
+            <Label htmlFor="password">Password</Label>
+            <Input id="password" {...field('password')} type="password" placeholder="Min. 8 characters" autoComplete="new-password" />
             {errors.password && <p className="text-destructive text-xs">{errors.password.message}</p>}
+          </div>
+
+          <div className="space-y-1.5">
+            <Label htmlFor="phone">Phone (optional)</Label>
+            <Input id="phone" {...field('phone')} type="tel" placeholder="+1 (555) 000-0000" />
           </div>
 
           {error && (
             <p className="text-destructive text-sm text-center">
-              {(error as any)?.response?.data?.error?.message ?? 'Invalid credentials.'}
+              {(error as any)?.response?.data?.error?.message ?? 'Registration failed. Please try again.'}
             </p>
           )}
 
           <Button type="submit" className="w-full" disabled={isPending}>
-            {isPending ? 'Signing in...' : 'Sign in'}
+            {isPending ? 'Creating account...' : 'Create account'}
           </Button>
         </form>
 
         <p className="text-center text-sm text-muted-foreground">
-          No account?{' '}
-          <Link href="/register" className="font-medium text-foreground underline underline-offset-4 hover:text-primary">
-            Create one
+          Already have an account?{' '}
+          <Link href="/login" className="font-medium text-foreground underline underline-offset-4 hover:text-primary">
+            Sign in
           </Link>
         </p>
       </CardContent>
     </Card>
-  );
-}
-
-export default function LoginPage() {
-  return (
-    <Suspense fallback={
-      <Card className="w-full max-w-md">
-        <CardContent className="flex justify-center py-12">
-          <Spinner size="lg" />
-        </CardContent>
-      </Card>
-    }>
-      <LoginInner />
-    </Suspense>
   );
 }
