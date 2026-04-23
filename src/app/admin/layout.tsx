@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import {
   LayoutDashboard,
@@ -8,7 +9,6 @@ import {
   Users,
   MessageSquare,
   Star,
-  Gift,
   CalendarDays,
   Package,
   LogOut,
@@ -41,8 +41,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const sidebar = (
     <div className="flex h-full flex-col">
       <div className="flex h-16 items-center gap-2 border-b px-6">
-        <Gift className="h-5 w-5 text-primary" />
-        <span className="font-bold text-lg">Admin</span>
+        <Link href="/admin" className="flex items-center">
+          <Image src="/images/luvngift.png" alt="Luvngift" width={48} height={48} className="object-contain" />
+        </Link>
+        <span className="font-semibold text-sm text-muted-foreground">Admin</span>
       </div>
 
       <nav className="flex-1 space-y-1 p-4">

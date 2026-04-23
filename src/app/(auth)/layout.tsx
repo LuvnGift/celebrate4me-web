@@ -1,13 +1,12 @@
-import { Gift } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen flex flex-col">
       <header className="border-b py-4 px-6">
-        <Link href="/" className="flex items-center gap-2 font-bold text-lg w-fit">
-          <Gift className="h-5 w-5 text-primary" />
-          Luvngift
+        <Link href="/" className="flex items-center w-fit">
+          <Image src="/images/luvngift.png" alt="Luvngift" width={56} height={56} className="object-contain" />
         </Link>
       </header>
       <main className="flex-1 flex items-center justify-center px-4 py-12">

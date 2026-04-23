@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Gift } from 'lucide-react';
+import Image from 'next/image';
 import { Separator } from '@/components/ui/separator';
 
 export function Footer() {
@@ -8,9 +8,8 @@ export function Footer() {
       <div className="container mx-auto px-4 py-10">
         <div className="grid grid-cols-2 md:grid-cols-5 gap-8">
           <div className="col-span-2 md:col-span-1">
-            <Link href="/" className="flex items-center gap-2 font-bold text-base mb-3">
-              <Gift className="h-5 w-5 text-primary" />
-              Luvngift
+            <Link href="/" className="flex items-center mb-3 w-fit">
+              <Image src="/images/luvngift.png" alt="Luvngift" width={72} height={72} className="object-contain" />
             </Link>
             <p className="text-sm text-muted-foreground leading-relaxed">
               Send curated gifts and experiences to your loved ones in Nigeria from anywhere in the world.

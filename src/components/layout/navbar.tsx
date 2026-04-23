@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { Gift, Package, User, LogOut, Menu, X, Home, LayoutDashboard } from 'lucide-react';
 import { useState, useEffect } from 'react';
@@ -54,9 +55,8 @@ export function Navbar() {
     <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         {/* Brand */}
-        <Link href={isAdmin ? '/admin' : '/'} className="flex items-center gap-2 font-bold text-lg">
-          <Gift className="h-5 w-5 text-primary" />
-          <span>Luvngift</span>
+        <Link href={isAdmin ? '/admin' : '/'} className="flex items-center">
+          <Image src="/images/luvngift.png" alt="Luvngift" width={56} height={56} priority className="object-contain" />
         </Link>
 
         {/* Desktop nav */}
