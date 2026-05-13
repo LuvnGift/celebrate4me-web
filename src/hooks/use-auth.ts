@@ -67,12 +67,34 @@ export const useLogout = () => {
   });
 };
 
+/**
+ * Reads the non-httpOnly `session` cookie that the API sets on login.
+ * The cookie value is JSON: { isAuth: boolean, role: string }.
+ * Returns true when the cookie indicates an active session, even if the
+ * Zustand localStorage flag has been cleared (e.g. after a failed refresh).
+ */
+function hasServerSessionCookie(): boolean {
+  if (typeof document === 'undefined') return false;
+  const match = document.cookie.match(/(?:^|;\s*)session=([^;]*)/);
+  if (!match) return false;
+  try {
+    const parsed = JSON.parse(decodeURIComponent(match[1]));
+    return parsed?.isAuth === true;
+  } catch {
+    return false;
+  }
+}
+
 export const useMe = () => {
   const { isAuthenticated, setUser, clearAuth } = useAuthStore();
+  // Also check the session cookie so we can rehydrate the user even when
+  // localStorage was cleared (e.g. after a failed token refresh).
+  const sessionCookieActive = hasServerSessionCookie();
+
   const query = useQuery({
     queryKey: ['me'],
     queryFn: () => api.get('/api/v1/users/me').then((r) => r.data.data),
-    enabled: isAuthenticated,
+    enabled: isAuthenticated || sessionCookieActive,
     retry: false,
   });
 
